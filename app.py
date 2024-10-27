@@ -1,6 +1,6 @@
-from flask import Flask, request, jsonify, render_template
-import redis
-import mysql.connector
+from flask import Flask, request, jsonify, render_template # type: ignore
+import redis # type: ignore
+import mysql.connector # type: ignore
 import os
 import time
 
