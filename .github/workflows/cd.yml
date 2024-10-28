@@ -1,11 +1,21 @@
 
+name: Simple Deployment
 
+on:
+  push:
+    branches:
+      - main
 
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
 
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-
-
-
+      - name: Echo deployment message
+        run: echo "Deployment process has started."
 
 
 # soon to be added after setting infrastructure as a code
