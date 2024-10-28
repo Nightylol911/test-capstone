@@ -1,7 +1,13 @@
+networks:
+  my-network:
+    driver: bridge
+
 services:
   flask-app:
     build: .
     container_name: flask-app
+    networks:
+      - my-network
     ports:
       - "5000:5000"
     environment:
@@ -11,12 +17,16 @@ services:
       - DB_PASSWORD=password
       - DB_NAME=mydatabase
     depends_on:
-      - redis
-      - db
+      redis:
+        condition: service_started
+      db:
+        condition: service_healthy
 
   redis:
     image: redis:latest
     container_name: redis-container
+    networks:
+      - my-network
     ports:
       - "6379:6379"
 
@@ -33,6 +43,13 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    networks:
+      - my-network
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
 volumes:
   mysql_data:
