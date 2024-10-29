@@ -1,22 +1,29 @@
-
-name: Simple Deployment
+name: Deploy image to self-hosted server
 
 on:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows: ["CI Pipeline"]
+    branches: [main]
+    types: 
+      - completed
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
-
+    runs-on: self-hosted
+    strategy:
+      matrix:
+        servers: ["10.0.2.29", "10.0.2.63"]
+    
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Echo deployment message
-        run: echo "Deployment process has started."
-
-
-# soon to be added after setting infrastructure as a code
-# new scope
+      - name: Deploying docker image to ${{ matrix.servers }}
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
+        run: |
+              ssh-keyscan -H ${{ matrix.servers }} >> ~/.ssh/known_hosts
+              echo "$SSH_PRIVATE_KEY" > ~/.ssh/ssh_key
+              chmod 600 ~/.ssh/ssh_key
+              ssh -i ~/.ssh/ssh_key $SSH_USERNAME@${{ matrix.servers }} "
+              docker compose pull flask-app && 
+              docker compose up -d flask-app && 
+              docker image prune -f"
