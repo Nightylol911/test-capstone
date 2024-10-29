@@ -1,10 +1,13 @@
 # Docker-specific files
 .dockerignore
 Dockerfile
+docker-compose.yml
+docker*
 
 # Version control
 .git
 .gitignore
+.github
 
 README.md
 
