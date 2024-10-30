@@ -12,16 +12,16 @@ jobs:
     runs-on: self-hosted
     strategy:
       matrix:
-        servers: ["10.0.2.202", "10.0.2.201"]
+        servers: ["10.0.2.60", "10.0.2.61"]
     
     steps:
       - name: Deploying docker image to ${{ matrix.servers }}
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }}
           SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
         run: |
               ssh-keyscan -H ${{ matrix.servers }} >> ~/.ssh/known_hosts
-              echo "$SSH_PRIVATE_KEY" > ~/.ssh/ssh_key
+              echo "$SSH_KEY" > ~/.ssh/ssh_key
               chmod 600 ~/.ssh/ssh_key
               ssh -i ~/.ssh/ssh_key $SSH_USERNAME@${{ matrix.servers }} "
               docker compose pull nightylol/flask-app && 
