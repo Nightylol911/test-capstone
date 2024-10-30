@@ -27,11 +27,3 @@ jobs:
               docker compose pull nightylol/flask-app && 
               docker compose up -d nightylol/flask-app && 
               docker image prune -f"
-
-              run: |
-                echo "$SSH_KEY" > myKey2.pem
-                chmod 600 myKey2.pem
-                ssh -i myKey2.pem $SSH_USER@$SSH_HOST "
-                cd docker-compose-flask-app && 
-                git pull https://github.com/faialotaibi/docker-compose-flask-app.git && 
-                docker compose up -d --build"
