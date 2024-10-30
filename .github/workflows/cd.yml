@@ -12,7 +12,7 @@ jobs:
     runs-on: self-hosted
     strategy:
       matrix:
-        servers: ["10.0.2.29", "10.0.2.63"]
+        servers: ["10.0.2.202", "10.0.2.201"]
     
     steps:
       - name: Deploying docker image to ${{ matrix.servers }}
@@ -24,6 +24,14 @@ jobs:
               echo "$SSH_PRIVATE_KEY" > ~/.ssh/ssh_key
               chmod 600 ~/.ssh/ssh_key
               ssh -i ~/.ssh/ssh_key $SSH_USERNAME@${{ matrix.servers }} "
-              docker compose pull flask-app && 
-              docker compose up -d flask-app && 
+              docker compose pull nightylol/flask-app && 
+              docker compose up -d nightylol/flask-app && 
               docker image prune -f"
+
+              run: |
+                echo "$SSH_KEY" > myKey2.pem
+                chmod 600 myKey2.pem
+                ssh -i myKey2.pem $SSH_USER@$SSH_HOST "
+                cd docker-compose-flask-app && 
+                git pull https://github.com/faialotaibi/docker-compose-flask-app.git && 
+                docker compose up -d --build"
